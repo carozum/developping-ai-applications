@@ -53,6 +53,30 @@ The response consists in :
 - category score : confidence of a violation. larger numbers --> greater certainty of violation. Numbers are between 0 and 1 but are not probabilities
 - flagged True / False indicator of a violation
 
+category scores : we have to determine appropriate thresholds for each use case. 
+- stricter thresholds may result in *fewer false negative* (students communications in a school...). To flag more content even if that means accidentally flagging some non-violations. The goal is here to minimize the number of missed violations so called false negatives
+- or more lenient thresholds may result in *fewer false positive* (communication, law enforcement) so reports on crimes are not accidentally flagged. Incorrectly flagging a crime report here would be an example of false positive. 
+
+### Speech to text audio transcription endpoint with whisper
+- model Whisper
+- audio transcripts 
+    - automating meeting transcripts
+    - video caption generation (accessibility)
+- translate audio from one language into an english transcript
+- supports mp3, mp4, mpeg, mpga, m4a, wav, webm (25MB limit)
+- other languages than english are supported
+
+The audio file is read and then stored as binary format. 
+
+### Speech Translation endpoint with whisper
+- Translate and transcribe audio
+- limited to English transcripts? (german to english but not german to french ?)
+- supports mp3, mp4, mpeg, mpga, m4a, wav, webm (25MB limit)
+QUality varies on audio quality, audio language and model's knowledge. Beware before creating a whole application on that model and endpoint. --> to help the model do the best, we can provide a prompt to the model. Can improve the quality of the model by:
+- providing an example of desired style
+- provide context on transcript context
+
+
 ## converting the response into a dictionary
 print(response.model_dump())
 
@@ -120,4 +144,8 @@ Completions endpoint can perform these tasks providing the model has sufficient 
 
 *In context-learning*
 *one shot prompting* one example provided
-*few shot prompting* a handful of examples provides
+*few shot prompting* a handful of examples provided
+
+## combining models
+![combining chaining models](image-9.png)
+*chaining* :feeding output from one model into another model.

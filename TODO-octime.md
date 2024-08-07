@@ -20,3 +20,7 @@ Ecrire des prompts pour les différents use case
 
 # paramètres
 Ajout de plusieurs réponses au chat gpt, ajsuter température, top-p max-tokens et n pour avoir des réponses différentes
+
+# ajouter la possibilité de faire du speech to text
+pour faire de la translation ou de la transcription ou les 2 à la fois. Voir si l'anglais est la seule langue (german to english but not german to french??) ou si pour la translation çà marche aussi en français ou en espagnol.
+--> penser aux filiales espagnoles pour mieux communiquer avec elles. 
