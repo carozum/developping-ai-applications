@@ -15,6 +15,7 @@ Ecrire des prompts pour les différents use case
 - content generation
 - text transformation
 - text classification
+- in context learning : ajouter few shot prompting (ajouter des exemples)
 
 
 # paramètres
