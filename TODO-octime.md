@@ -4,7 +4,7 @@ Ajouter des organisations selon le chat pour suivre les couts. Et pour éviter d
 --> voir si possible avec AzureOpenAI
 
 # moderations
-Ajouter la modération
+Ajouter des seuils de modération spécifiques si nécessaires (différents de ceux définis par OpenAI) -> determine appropriate thresholds for each use case. 
 
 # modèle GPT 4o mini
 Investiguer GPT4o mini

@@ -40,6 +40,7 @@ ideation, customer support assistant, personal tutor, translating languages, wri
 - existence of roles for better customization :system (behavior of the assistant), user (instruct the assistant), assistant (response to the user instruction). 
 - The assistant role can also be written by the user to provide examples to help the model better understand.
 - the prompt is now a list of messages, each message being a dictionary with a role
+- storing responses to create a conversation history
 
 ### moderation endpoint
 checks content for violations of the OPenai's usage policies, including : 
@@ -47,12 +48,16 @@ checks content for violations of the OPenai's usage policies, including :
 - hate speech
 - can customize model sensitivity to specific violations
 
+The response consists in : 
+- category violation : True/False
+- category score : confidence of a violation. larger numbers --> greater certainty of violation. Numbers are between 0 and 1 but are not probabilities
+- flagged True / False indicator of a violation
 
 ## converting the response into a dictionary
 print(response.model_dump())
 
 
-## organisations
+## organizations
 For business use cases with frequent requests to the API, it's important to manage usage across the business. Setting up an organization for the API allows for better management of access, billing, and usage limits to the API. Users can be part of multiple organizations and attribute requests to specific organizations for billing.
 
 https://platform.openai.com/account/org-settings
