@@ -31,6 +31,18 @@ Investment refers to the act of committing money or capital to an enterprise wit
 # max_tokens 100, temperature 1.5
 prompt6 = "generate a catchy slogan for a new restaurant"
 
+# text classification
+# max_tokens 100 temperature 0 max_tokens 50
+prompt7 = """Classify the sentiment in the following statements as either negative, positive or neutral:
+Unbelievably good!
+Shoes fell apart on the second use
+The shoes look nice but they aren't very comfortable
+Can't wait to show them off!"""
+
+# text classification
+# max_tokens 100 temperature 0.5
+prompt8 = """Categorize the following companies  : Apple, Microsoft, Saudi Aramco, Alphabet, Amazon, Berkshire Hathaway, NVIDIA, Meta, Tesla, and LVMH into 4 categories : Tech, Energy, Luxury Goods, or Investment""",
+
 ##############################################################
 # interogating openai api completion end point (single turn)
 # question answering
@@ -43,14 +55,14 @@ client = OpenAI(
 response = client.completions.create(
     model="gpt-3.5-turbo-instruct",
     # Write your prompt
-    prompt=prompt6,
-    temperature=1.5,
+    prompt=prompt8,
+    temperature=0.5,
     max_tokens=100,
-    n=2
+    n=1
 )
 
 # print(response)  # a completion object
 # print(response.model_dump())  # convert to dictionary
-for i in range(2):
+for i in range(1):
     # text of the first response
     print(f"response {i} : {response.choices[i].text}")

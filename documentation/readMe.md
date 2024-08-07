@@ -18,18 +18,28 @@ Open AI has its own python library called openai, an abstraction to make request
 the OpenAI endpoints (see openAI documentation): 
 - Authentication key
 
+### Usage costs
+depending on the model requested and on the size of the model input and output
+![cost calculation](image-7.png)
+Calculating cost per time
 
 ## endpoints : 
 ![the endpoints](image-5.png)
+![completions and chat completions](image-8.png)
 
 ### completions endpoint (single turn) : 
+Usually using a *gpt35-turbo-instruct* to perform single turn
 - used with a prompt (input text)
 - generate text (output text) to complete the prompt in a likely and consistent way
 - the response is a Completion object with various attributes
 - tasks : answer questions, classification into categories, sentiment analysis, explaining complex topics
 
 ### chat endpoint (multiturn tasks)
+usually using a *gpt35-turbo* to perform multi turn : cheaper that the turbo instruct. 
 ideation, customer support assistant, personal tutor, translating languages, writing code... or perform single turn tasks. 
+- existence of roles for better customization :system (behavior of the assistant), user (instruct the assistant), assistant (response to the user instruction). 
+- The assistant role can also be written by the user to provide examples to help the model better understand.
+- the prompt is now a list of messages, each message being a dictionary with a role
 
 ### moderation endpoint
 checks content for violations of the OPenai's usage policies, including : 
@@ -37,8 +47,10 @@ checks content for violations of the OPenai's usage policies, including :
 - hate speech
 - can customize model sensitivity to specific violations
 
+
 ## converting the response into a dictionary
 print(response.model_dump())
+
 
 ## organisations
 For business use cases with frequent requests to the API, it's important to manage usage across the business. Setting up an organization for the API allows for better management of access, billing, and usage limits to the API. Users can be part of multiple organizations and attribute requests to specific organizations for billing.
@@ -67,12 +79,20 @@ In this example, we've created separate OpenAI organizations for three different
 
 you can set up organizations to manage API usage and billing. Users can be part of multiple organizations and attribute API requests to a specific organization. It's best practice to structure organizations such that each business unit or product feature has a separate organization, depending on the number of features the business has built on the OpenAI API.
 
+
 ## parameters
 - temperature : control on determinism, ranges from 0 (highly deterministic) to 2 (very random)
 - max_tokens
+- n number of responses
+- model
+- prompt
+- topp
+- frequencepenalty
 
 
-## use cases
+
+## use cases - prompt engineering - completions / chat completions endpoints
+Providing a more specific prompt gave you much greater control over the model's response
 - content generation : 
     - question answering
     - ideation """create a tagline for a new hotdog stand"""
@@ -85,7 +105,14 @@ you can set up organizations to manage API usage and billing. Users can be part 
     """Update name to Maarten, pronouns to he/him and job title to Senior Content Developer in:
     Joanne is an AI developer. She likes playing with her kids"""
 
-## Usage costs
-depending on the model requested and on the size of the model input and output
-![cost calculation](image-7.png)
-Calculating cost per time
+- text classification : assigning a label to a piece of information
+    - identifying the language from text
+    - categorization (sorting places)
+    - classifying sentiments
+Completions endpoint can perform these tasks providing the model has sufficient knowledge and the prompt contains sufficient context.
+
+*zero shot prompting* no example provided
+
+*In context-learning*
+*one shot prompting* one example provided
+*few shot prompting* a handful of examples provides
