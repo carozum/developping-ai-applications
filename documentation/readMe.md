@@ -149,3 +149,26 @@ Completions endpoint can perform these tasks providing the model has sufficient 
 ## combining models
 ![combining chaining models](image-9.png)
 *chaining* :feeding output from one model into another model.
+- summarizing a meeting recording chaining whisper to gpt text model
+
+## challenges of a production environment
+
+### response_format parameter for the API
+- response format both in the prompt and as a parameter.
+- what are the other formats? Json is very used and useful
+
+### error handling 
+- display a user friendly error message 
+- alternatives for when the service is unavailable
+
+### moderation and safety
+- control unwanted inputs
+- minimizing the risk of data leaks
+
+### testing and validation
+- checking for responses that are out of topic
+- testing for inconsistent behavior
+
+### communication with external systems
+- calling external functions and APIs
+- Optimizing response times
