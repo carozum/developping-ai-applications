@@ -22,6 +22,9 @@ response_format={'type': "json_object"} + ajouter dans le prompt le format de la
 ### Stream, asynchronous
 stream true dans le chat.completion
 
+###########################################################
+# errors handling
+add try except block with error handling around the OpenAI API call (use specific errors relating to OpenAI)
 
 
 ###########################################################
