@@ -188,10 +188,19 @@ If you send many requests or use lots of tokens in a short period, you may hit y
 
 What are the solutions to the rate limit errors ? Handling this error will help us maximize the requests to the API while minimizing delays and avoiding failed responses. Rate limits regulate the flow of data between users and the API. By avoiding single users from making excessive requests, rate limits can prevent malicious attacks, as well as ensuring a balanced distribution between users within an organization.
 
-Much of this risk can be mitigated by, instead of running multiple features under the same organization.
+A *rate limit error* can be due to either 
+- the number of requests in a given timespan being too high, meaning there are *too many requests* being sent, 
+- or the number of tokens in the requests exceeding certain limits, meaning *too much text* has been included in the request.
 
+Some solutions to avoid these limits include 
+- *retry* : performing a *short pause between requests*, setting the function to retry in case limits are hit. 
+- *batching* : processing multiple messages in one request. If the *frequency of requests* is hitting the rate limit, multiple requests can be sent in batches at more staggered time intervals: this is referred to as 'batching'. 
+- *RReducing tokens* : quantifying and cutting down the number of tokens. If the tokens limit is hit, the number of tokens can be quantified and reduced accordingly.
 
 ### First solution to API rates : organizations
+
+Much of this risk can be mitigated by, instead of running multiple features under the same organization.
+
 For business use cases with frequent requests to the API, it's important to manage usage across the business. Setting up an organization for the API allows for better management of access, billing, and usage limits to the API. Users can be part of multiple organizations and attribute requests to specific organizations for billing. https://platform.openai.com/account/org-settings
 
 To attribute a request to a specific organization, we only need to add one more line of code. Like the API key, the organization ID can be set before the request.
@@ -207,12 +216,24 @@ In this example, we've created separate OpenAI organizations for three different
 you can set up organizations to manage API usage and billing. Users can be part of multiple organizations and attribute API requests to a specific organization. It's best practice to structure organizations such that each business unit or product feature has a separate organization, depending on the number of features the business has built on the OpenAI API.
 
 
-### Second solution : limit the number of tokens 
+### Second solution : retrying
+
+When sending requests that might go above the rate limit due to their high frequency, we can set our function to automatically retry in case the limit is hit. One way to approach this is by adding a *retry decorator using Python's Tenacity library*. A decorator is a way to slightly modify the function without changing its inner code, and the retry decorator is used to control the extent to which the function should be run again when failing.
+
+The wait parameter can be configured through the wait_random_exponential() function. Using the exponential backoff mode is a way to automatically retry requests with gradually increasing delays from a minimum, in this case of 1 second, to a maximum value, in this case of 60 seconds. The stop parameter can be specified using the stop_after_attempt() function and specifying the maximum number of tries. To use the decorator we'll have to wrap our response request as a function, such as in this example where we have a get_response() function returning the message.
+
+
+### Third solution : batching
+If the rate limit is due to the timing of the requests and not the number of tokens, one way to avoid it is to send the requests in batches. This is a much more efficient approach than looping through the Chat Completions endpoint, passing one question per iteration. See example
+
+### Forth solution : reducing tokens
+
+Another way to avoid rate limit errors if the time frequency of requests is not an issue, is to reduce tokens. 
+Tokens can be thought of as chunks of words that constitute 'units' of a word. 
+
+One way to measure tokens in Python is to use the tiktoken library: this way we can first create the encoding using the 'encoding_for_model' function and selecting the model we are using, and then count the tokens in the prompt, such as in the sentence we have in this example, using 'encode', and obtaining the total number using the 'len()' function. Each OpenAI model has different limits to the number of tokens that it can handle in input, and this also constitutes a way to check that the prompt is below those limits.
+limit the number of tokens 
 In the parameters of the request
-
-
-### Third solution : 
-
 
 
 #################################################################
