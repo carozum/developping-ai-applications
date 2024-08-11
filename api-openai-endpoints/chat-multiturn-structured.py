@@ -61,6 +61,23 @@ print(get_response_not_structured("gpt-3.5-turbo", messages0))
 5. Elm tree - Ulmus
 """
 
+###############################################################
+# structure precised in the prompt
+
+measurements = [5.2, 6.3, 3.7]
+messages = []
+# Provide a system message and user messages to send the batch
+messages.append(
+    {'role': 'system', "content": """You are given a series of measurements and are asked to convert each of the measurements from kilometers to miles and present the results in a table containing both the original and converted measurements"""}
+)
+# Append measurements to the message
+[messages.append({"role": "user", "content": str(measure)})
+ for measure in measurements]
+
+response = get_response_not_structured("gpt-4o", messages)
+print(response)
+
+
 ################################################################
 # output JSON - specify the expected format json both in the prompt AND in the response_format parameter of the OpenAI API call
 

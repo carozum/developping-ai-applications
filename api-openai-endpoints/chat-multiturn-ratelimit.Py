@@ -42,6 +42,14 @@ print(get_response_json(model, [{"role": "user",
       "content": "List ten holiday destinations, in the format of a Json"}]))
 
 
+def get_response(model, prompt):
+    response = client.chat.completions.create(
+        model=model,
+        messages=prompt
+    )
+    return response.choices[0].message.content
+
+
 ######################################################
 # 2. batching in one request multiple queries
 """In this example, we are asking the API to return the capital city for each of the countries given, through a list of dictionaries passed to the API. Notice that in this case we have specified precise instructions as the system message in order to get a full answer with all three responses."""
@@ -72,11 +80,14 @@ measurements = [5.2, 6.3, 3.7]
 messages = []
 # Provide a system message and user messages to send the batch
 messages.append(
-    {'role': 'system', "content": """You are given a series of measurements and are asked to convert each of the measurements from kilometers to miles and present the results in a Json containing both the original and converted measurements"""}
+    {'role': 'system', "content": """You are given a series of measurements and are asked to convert each of the measurements from kilometers to miles and present the results in a table containing both the original and converted measurements"""}
 )
 # Append measurements to the message
 [messages.append({"role": "user", "content": str(measure)})
  for measure in measurements]
+
+response = get_response("gpt-4o", messages)
+print(response)
 """
 messages = [{'role': 'system', 'content': 'You are given a series of measurements and are asks to convert each of the measurements from kilometers to miles and present the results in a table containing both the original and converted measurements'}, {'role': 'user', 'content': 5.2}, {'role': 'user', 'content': 6.3}, {'role': 'user', 'content': 3.7}]"""
 
@@ -87,8 +98,24 @@ print(response)
 #######################################################
 # 3. Reducing the number of tokens
 
-
+# Use tiktoken to create the encoding for your model
 encoding = tiktoken.encoding_for_model(model)
+
 prompt = "Tokens can be full words, or groups of characters commonly grouped together: tokenization. "
 num_tokens = len(encoding.encode(prompt))
 print(num_tokens)
+
+
+input_message = {"role": "user",
+                 "content": "I'd like to buy a shirt and a jacket. Can you suggest two color pairings for these items?"}
+
+# Check for the number of tokens
+num_tokens = len(encoding.encode(input_message['content']))
+
+# Run the chat completions function and print the response
+if num_tokens <= 100:
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo", messages=[input_message])
+    print(response.choices[0].message.content)
+else:
+    print("Message exceeds token limit")
