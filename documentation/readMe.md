@@ -1,4 +1,18 @@
 # Working with the OpenAI API - Datacamp
+1. Understand OpenAI API
+2. Usage costs
+3. Endpoints
+4. parameters of the API requests
+5. prompt engineering - to answer use cases
+6. combining models - chaining
+7. error handling (for production environment)
+8. API rate
+
+
+
+
+#################################################################
+## 1. Understand OpenAI API
 https://platform.openai.com/signup 
 https://platform.openai.com/account/api-keys 
 
@@ -18,12 +32,15 @@ Open AI has its own python library called openai, an abstraction to make request
 the OpenAI endpoints (see openAI documentation): 
 - Authentication key
 
-### Usage costs
+#################################################################
+## 2. Usage costs
 depending on the model requested and on the size of the model input and output
 ![cost calculation](image-7.png)
 Calculating cost per time
 
-## endpoints : 
+#################################################################
+## 3. endpoints : 
+
 ![the endpoints](image-5.png)
 ![completions and chat completions](image-8.png)
 
@@ -57,7 +74,7 @@ category scores : we have to determine appropriate thresholds for each use case.
 - stricter thresholds may result in *fewer false negative* (students communications in a school...). To flag more content even if that means accidentally flagging some non-violations. The goal is here to minimize the number of missed violations so called false negatives
 - or more lenient thresholds may result in *fewer false positive* (communication, law enforcement) so reports on crimes are not accidentally flagged. Incorrectly flagging a crime report here would be an example of false positive. 
 
-### Speech to text audio transcription endpoint with whisper
+### audio endpoint : Speech to text transcription  with whisper
 - model Whisper
 - audio transcripts 
     - automating meeting transcripts
@@ -68,7 +85,7 @@ category scores : we have to determine appropriate thresholds for each use case.
 
 The audio file is read and then stored as binary format. 
 
-### Speech Translation endpoint with whisper
+### audio endpoint : Speech Translation with whisper
 - Translate and transcribe audio
 - limited to English transcripts? (german to english but not german to french ?)
 - supports mp3, mp4, mpeg, mpga, m4a, wav, webm (25MB limit)
@@ -77,39 +94,9 @@ QUality varies on audio quality, audio language and model's knowledge. Beware be
 - provide context on transcript context
 
 
-## converting the response into a dictionary
-print(response.model_dump())
 
-
-## organizations
-For business use cases with frequent requests to the API, it's important to manage usage across the business. Setting up an organization for the API allows for better management of access, billing, and usage limits to the API. Users can be part of multiple organizations and attribute requests to specific organizations for billing.
-
-https://platform.openai.com/account/org-settings
-
-To attribute a request to a specific organization, we only need to add one more line of code. Like the API key, the organization ID can be set before the request.
-
-## API rate
-API rate limits are another key consideration for companies building features on the OpenAI API. Rate limits are a cap on the frequency and size of API requests. They are put in place to ensure fair access to the API, prevent misuse, and also manage the infrastructure that supports the API. For many cases, this may not be an issue, but if a feature is exposed to a large user base, or the requests require generating large bodies of content, they could be at risk of hitting the rate limits.
-
-https://platform.openai.com/docs/guides/rate-limits
-
-If you send many requests or use lots of tokens in a short period, you may hit your rate limit and see an ```openai.error.RateLimitError```. If you see this error, please wait a minute for your quota to reset and you should be able to begin sending more requests. Please see OpenAI's rate limit error support article for more information.
-https://help.openai.com/en/articles/6897202-ratelimiterror
-
-Much of this risk can be mitigated by, instead of running multiple features under the same organization,
-
-## Organization structure
-
-having separate organizations for each business unit or product feature, depending on the number of features built on the OpenAI API.
-
-![organisation structure](image-6.png)
-
-In this example, we've created separate OpenAI organizations for three different AI-powered features: a customer service chatbot, a content recommendation system, and a video transcript generator. This distributes the requests to reduce the risk of hitting the rate limit. It also removes the single failure point, so an issue to one organization, such as a billing issue, will only result in the failure of a single feature. Product-separated organizations also provides more granular insights into usage and billing.
-
-you can set up organizations to manage API usage and billing. Users can be part of multiple organizations and attribute API requests to a specific organization. It's best practice to structure organizations such that each business unit or product feature has a separate organization, depending on the number of features the business has built on the OpenAI API.
-
-
-## parameters
+#################################################################
+## 4. parameters of the API requests
 - temperature : control on determinism, ranges from 0 (highly deterministic) to 2 (very random)
 - max_tokens
 - n number of responses
@@ -118,9 +105,15 @@ you can set up organizations to manage API usage and billing. Users can be part 
 - topp
 - frequencepenalty
 
+### response_format parameter for the API
+- response format both in the prompt and as a parameter.
+- what are the other formats? Json is very used and useful
 
 
-## use cases - prompt engineering - completions / chat completions endpoints
+
+#################################################################
+## 5. prompt engineering - to answer use cases
+
 Providing a more specific prompt gave you much greater control over the model's response
 - content generation : 
     - question answering
@@ -146,29 +139,99 @@ Completions endpoint can perform these tasks providing the model has sufficient 
 *one shot prompting* one example provided
 *few shot prompting* a handful of examples provided
 
-## combining models
+
+
+#################################################################
+## 6. combining models - chaining
+
 ![combining chaining models](image-9.png)
 *chaining* :feeding output from one model into another model.
 - summarizing a meeting recording chaining whisper to gpt text model
 
-## challenges of a production environment
 
-### response_format parameter for the API
-- response format both in the prompt and as a parameter.
-- what are the other formats? Json is very used and useful
 
-### error handling 
+#################################################################
+## 7. error handling (for production environment)
+
+AI systems are complex so 
+- simplifying the user experience is crucial. 
+- eliminating barriers to using these system
 - display a user friendly error message 
 - alternatives for when the service is unavailable
 
-### moderation and safety
+*Connection errors* : 
+Generally due to connection issues on either the user's or the service's side. 
+--> InternalServerError, APIConnectionError, APITimeoutError
+--> solution : check our connection configuration (firewalls), wait and retry. Reach out the support if that fails. 
+
+*Resource Limits Errors *
+Generally due limits on the frequency of requests or the amount of text passed.
+--> RateLimitError, ConflictError
+--> solution : ensure that the requests are paced within the limits of the API : reducing the amount of text in the requests sent or staggering requests if they are frequent 
+
+*Authentication Errors*
+AuthenticationError code 401, Incorrect API key
+
+*Bad request Errors*
+The request  was malformed or missing some required parameters (invalid messages...) or model deprecated : NotFoundError code 404
+
+==> try except blocks to encapsulate the API call !
+
+
+
+#################################################################
+## 8. API rate
+
+API rate limits are another key consideration for companies building features on the OpenAI API. Rate limits are a cap on the frequency and size of API requests. They are put in place to ensure fair access to the API, prevent misuse, and also manage the infrastructure that supports the API. For many cases, this may not be an issue, but if a feature is exposed to a large user base, or the requests require generating large bodies of content, they could be at risk of hitting the rate limits. https://platform.openai.com/docs/guides/rate-limits
+
+If you send many requests or use lots of tokens in a short period, you may hit your rate limit and see an ```openai.error.RateLimitError```. If you see this error, please wait a minute for your quota to reset and you should be able to begin sending more requests. Please see OpenAI's rate limit error support article for more information. https://help.openai.com/en/articles/6897202-ratelimiterror
+
+What are the solutions to the rate limit errors ? Handling this error will help us maximize the requests to the API while minimizing delays and avoiding failed responses. Rate limits regulate the flow of data between users and the API. By avoiding single users from making excessive requests, rate limits can prevent malicious attacks, as well as ensuring a balanced distribution between users within an organization.
+
+Much of this risk can be mitigated by, instead of running multiple features under the same organization.
+
+
+### First solution to API rates : organizations
+For business use cases with frequent requests to the API, it's important to manage usage across the business. Setting up an organization for the API allows for better management of access, billing, and usage limits to the API. Users can be part of multiple organizations and attribute requests to specific organizations for billing. https://platform.openai.com/account/org-settings
+
+To attribute a request to a specific organization, we only need to add one more line of code. Like the API key, the organization ID can be set before the request.
+
+#### Organization structure
+
+having separate organizations for each business unit or product feature, depending on the number of features built on the OpenAI API.
+
+![organisation structure](image-6.png)
+
+In this example, we've created separate OpenAI organizations for three different AI-powered features: a customer service chatbot, a content recommendation system, and a video transcript generator. This distributes the requests to reduce the risk of hitting the rate limit. It also removes the single failure point, so an issue to one organization, such as a billing issue, will only result in the failure of a single feature. Product-separated organizations also provides more granular insights into usage and billing.
+
+you can set up organizations to manage API usage and billing. Users can be part of multiple organizations and attribute API requests to a specific organization. It's best practice to structure organizations such that each business unit or product feature has a separate organization, depending on the number of features the business has built on the OpenAI API.
+
+
+### Second solution : limit the number of tokens 
+In the parameters of the request
+
+
+### Third solution : 
+
+
+
+#################################################################
+## 9. moderation and safety
 - control unwanted inputs
 - minimizing the risk of data leaks
 
-### testing and validation
+#################################################################
+## 10. testing and validation
 - checking for responses that are out of topic
 - testing for inconsistent behavior
 
-### communication with external systems
+#################################################################
+## 11. communication with external systems
 - calling external functions and APIs
 - Optimizing response times
+
+
+#################################################################
+## Annexes
+converting the response into a dictionary
+print(response.model_dump())
