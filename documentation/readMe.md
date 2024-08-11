@@ -103,13 +103,18 @@ QUality varies on audio quality, audio language and model's knowledge. Beware be
 - model
 - prompt
 - topp
-- frequencepenalty
+- frequence penalty
 
 ### response_format parameter for the API
 - response format both in the prompt and as a parameter.
 - what are the other formats? Json is very used and useful
+Beware you have to add the response format inside of the prompt as "you answer in Json format" either you will have an error when get_response() is run. https://platform.openai.com/docs/guides/structured-outputs/examples 
 
-
+https://openai.com/index/introducing-structured-outputs-in-the-api/ 
+3 possibilities : 
+1. no structure specified for the output
+2. structured JSON
+3. custom structure defined using a class ()
 
 #################################################################
 ## 5. prompt engineering - to answer use cases
@@ -231,9 +236,10 @@ If the rate limit is due to the timing of the requests and not the number of tok
 Another way to avoid rate limit errors if the time frequency of requests is not an issue, is to reduce tokens. 
 Tokens can be thought of as chunks of words that constitute 'units' of a word. 
 
-One way to measure tokens in Python is to use the tiktoken library: this way we can first create the encoding using the 'encoding_for_model' function and selecting the model we are using, and then count the tokens in the prompt, such as in the sentence we have in this example, using 'encode', and obtaining the total number using the 'len()' function. Each OpenAI model has different limits to the number of tokens that it can handle in input, and this also constitutes a way to check that the prompt is below those limits.
-limit the number of tokens 
-In the parameters of the request
+One way to measure tokens in Python is to use the tiktoken library: this way we can first create the encoding using the 'encoding_for_model' function and selecting the model we are using, and then count the tokens in the prompt, such as in the sentence we have in this example, using 'encode', and obtaining the total number using the 'len()' function. 
+Each OpenAI model has different limits to the number of tokens that it can handle in input, and this also constitutes a way to check that the prompt is below those limits.
+
+Notice that you can also limit the number of tokens of the output using max_tokens parameter in th OpenAI API request. 
 
 
 #################################################################

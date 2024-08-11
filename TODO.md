@@ -2,6 +2,14 @@
 # revoir le mail de ce que veut le client
 
 
+#######################################################
+# suivi des nouveautés
+
+Search GPT
+
+custom structure for output
+
+
 ###########################################################
 # relire la documentation d'OpenAI / Azure OpenAI...
 
@@ -17,7 +25,10 @@ Voir si on peut utiliser l'assistant APi ou si encore en version beta
 ## paramètres
 Ajout de plusieurs réponses au chat gpt, 
 ajuster température, top-p max-tokens et n pour avoir des réponses différentes
-response_format={'type': "json_object"} + ajouter dans le prompt le format de la réponse
+
+## format des réponses
+- response_format={'type': "json_object"} + ajouter dans le prompt le format de la réponse
+- custom format défini via des classes
 
 ### Stream, asynchronous
 stream true dans le chat.completion
@@ -89,6 +100,7 @@ voir comment utiliser les nouveaux modèles 4o et 4o mini avec les images par ex
 
 ## SLM
 small language models
+--> cf video de Pamela
 
 
 
