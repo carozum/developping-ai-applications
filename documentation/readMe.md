@@ -7,6 +7,7 @@
 6. combining models - chaining
 7. error handling (for production environment)
 8. API rate
+9. Function calling
 
 
 
@@ -240,6 +241,10 @@ One way to measure tokens in Python is to use the tiktoken library: this way we 
 Each OpenAI model has different limits to the number of tokens that it can handle in input, and this also constitutes a way to check that the prompt is below those limits.
 
 Notice that you can also limit the number of tokens of the output using max_tokens parameter in th OpenAI API request. 
+
+
+#################################################################
+# 9. Function calling
 
 
 #################################################################
