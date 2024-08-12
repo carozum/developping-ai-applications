@@ -1,4 +1,4 @@
-# Working with the OpenAI API - Datacamp
+# Working with the OpenAI API 
 1. Understand OpenAI API
 2. Usage costs
 3. Endpoints
@@ -30,8 +30,7 @@ We can write code to interact with the OpenAI API and request the use of one of 
 
 Open AI has its own python library called openai, an abstraction to make requests to the API, importing the OpenAI Class from openai library which is used to instantiate a python API client. The client configures the environment for communicating with the API and make the request 
 
-the OpenAI endpoints (see openAI documentation): 
-- Authentication key
+--> need Authentication key
 
 #################################################################
 ## 2. Usage costs
@@ -105,6 +104,7 @@ QUality varies on audio quality, audio language and model's knowledge. Beware be
 - prompt
 - topp
 - frequence penalty
+- tools = function_definition (see functions)
 
 ### response_format parameter for the API
 - response format both in the prompt and as a parameter.
@@ -243,22 +243,58 @@ Each OpenAI model has different limits to the number of tokens that it can handl
 Notice that you can also limit the number of tokens of the output using max_tokens parameter in th OpenAI API request. 
 
 
+
 #################################################################
-# 9. Function calling
+## 9. Function calling
+
+So far, the way we've generated structures outputs has been to have the API generate Json or custom output 
+- by specifying the response_format parameter 
+- and adding a system message to specify the format
+
+But the reliability of our outputs are based on the model's interpretation which can be sometimes inconsistent.  Function calling addresses this issue by enabling OpenAI models to take user-defined functions as input, resulting in consistent responses without the need for complex text processing techniques. 
+
+https://platform.openai.com/docs/guides/function-calling
+
+OpenAI endpoints support 'tools', that can be defined 
+- to have the models return more specific information 
+- or return more precise outputs by defining a certain structure. 
+- Tools are options given to the endpoints that enhance the capabilities of the API call.
+
+Example we wanted to use the OpenAI API to control a smart home device, such as a smart light bulb. 
+- We could create a function that takes a natural language command, 
+- sends it to the OpenAI API for processing, 
+- and then interprets the response to control the hardware accordingly.
+
+![tools in OpenAI API call](image-10.png)
+
+The response should be interpreted consistently across different users, so we'd have to make a change to the original API call. This is where tools come in: by defining certain rules, we set the model output to follow a precise structure. To specify this type of behavior we'd have to define our tool as a function that outputs the expected response, hence the name 'function calling'.
+
+Use cases : 
+1. *going from unstructured to consistent structured output * : By ensuring a reliable structure of our API response, we can integrate our AI application with external systems and be more certain of its reliability. For instance, we can extract instructions from a natural language input and pass them to a smart home system. --> may be replaced by new structured outputs functionality (08/2024)
+
+The response from our API request that uses function calling will be nested in ```tool_calls[0].function.arguments```. ```tool_calls``` is a list, as there is an option to call multiple functions, and in that case each item in 'tool_calls' will contain the response from each function. In the example we have the job and location extracted from the job advert as output.
+
+2. *calling multiple functions to answer complex questions* : For example, in an e-commerce customer service chatbot where the prompt given as input could trigger different functions, such as a function that retrieves the product catalog, one that reads from the website's FAQs, or another that provides a response.
+3. *calling external API* : we can use function calling to define functions that enhance the responses by calling external APIs, such as for a weather chatbot calling an API to return current temperatures at specific locations.
+
+
+![the life cycle of a function call](image-11.png)
+
+In the API call for the *chat completions endpoint* add the parameter tools : ```tools = function_definition``` where the function_definition is a list of dictionaries
 
 
 #################################################################
-## 9. moderation and safety
+## 10. moderation and safety
 - control unwanted inputs
 - minimizing the risk of data leaks
 
 #################################################################
-## 10. testing and validation
+## 11. testing and validation
 - checking for responses that are out of topic
 - testing for inconsistent behavior
 
 #################################################################
-## 11. communication with external systems
+## 12. communication with external systems
 - calling external functions and APIs
 - Optimizing response times
 
@@ -267,3 +303,9 @@ Notice that you can also limit the number of tokens of the output using max_toke
 ## Annexes
 converting the response into a dictionary
 print(response.model_dump())
+
+#################################################################
+## sources
+- OpenAI platform documentation
+- Azure OpenAI documentation
+- Datacamp

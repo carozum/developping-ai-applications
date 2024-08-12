@@ -1,4 +1,6 @@
 """ 
+new 08/2024
+
 https://platform.openai.com/docs/guides/structured-outputs/structured-outputs
 structured output 
 - custom structure
