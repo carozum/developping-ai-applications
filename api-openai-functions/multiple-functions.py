@@ -6,6 +6,8 @@ The default behavior (tool_choice: "auto") is for the model to decide on its own
 To force the model to call a specific function set the tool_choice parameter with a specific function name. 
 
 You can also force the model to generate a user-facing message by setting tool_choice: "none".
+
+https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling
 """
 
 from dotenv import find_dotenv, load_dotenv
@@ -77,8 +79,11 @@ def get_current_time(location):
     print(f"No timezone data found for {location_lower}")
     return json.dumps({"location": location, "current_time": "unknown"})
 
+#######################################################################
+# Let the model choose which function to apply
 
-def run_conversation(input):
+
+def run_conversation_auto(input):
     # Initial user message
     messages = [
         {"role": "user", "content": input}]
@@ -127,6 +132,7 @@ def run_conversation(input):
         model=model,
         messages=messages,
         tools=tools,
+        # default behavior, the model choose the function to use based on the message and function definitions
         tool_choice="auto",
     )
 
@@ -177,9 +183,100 @@ def run_conversation(input):
 
 # Run the conversation and print the result
 input = "What's the weather and current time in San Francisco, Tokyo, and Paris?"
-print(run_conversation(input))
+print(run_conversation_auto(input))
 
 input2 = "what is adaptative AI in 150 tokens ?"
-print(run_conversation(input2))
+print(run_conversation_auto(input2))
 
 """The JSON response might not always be valid so you need to add additional logic to your code to be able to handle errors. For some use cases you may find you need to use fine-tuning to improve function calling performance. https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/fine-tuning-functions """
+
+
+#######################################################################
+# choose a function to apply
+
+tool_choice = {
+    'type': "function",
+    'function': {'name': 'get_current_weather'}}
+
+
+###################################################################
+# second example
+
+input = "\nI recently purchased the TechCorp ProMax and I'm absolutely in love with its powerful processor. However, I think they could really improve the product by deciding to offer more color options.\n"
+
+model = "gpt-4o"
+
+
+def get_response(model, input, function_definition):
+
+    messages = [
+        {'role': 'system', 'content': 'Apply both functions and return responses.'},
+        {'role': 'user', 'content': input}]
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        tools=function_definition
+    )
+    response_message = response.choices[0].message
+
+    return response_message
+
+
+function_definition = [
+    {'type': 'function',
+     'function': {
+         'name': 'extract_sentiment_and_product_features',
+         'parameters': {
+             'type': 'object',
+             'properties': {
+                 'product': {'type': 'string', 'description': 'The product name'},
+                 'sentiment': {'type': 'string', 'description': 'The overall sentiment of the review'},
+                 'features': {'type': 'array', 'items': {'type': 'string'}, 'description': 'List of features mentioned in the review'},
+                 'suggestions': {'type': 'array', 'items': {'type': 'string'}, 'description': 'Suggestions for improvement'}
+             }
+         }
+     }
+     }
+]
+# Append the second function
+function_definition.append(
+    {'type': 'function',
+     'function': {
+         'name': "reply_to_review",
+         'description': "reply to the review",
+         "parameters": {
+             'type': 'object',
+             'properties': {
+                 'reply': {
+                     'type': "string",
+                     'description': "response to the review"}
+             }
+         }
+     }
+     })
+
+response = get_response(model, input, function_definition)
+for tool_call in response.tool_calls:
+
+    function_name = tool_call.function.name
+    function_args = json.loads(tool_call.function.arguments)
+
+    if function_name == "extract_sentiment_and_product_features":
+        function_response = f"Sentiment :  {function_args['sentiment']}"
+    elif function_name == "reply_to_review":
+        function_response = f"Reply: {function_args['reply']}"
+
+    print(function_response)
+
+""" 
+{"product": "TechCorp ProMax", 
+"sentiment": "positive", 
+"features": ["powerful processor"], 
+"suggestions": ["offer more color options"]}
+
+{"reply": "Thank you for your feedback! We're thrilled to hear you love the powerful processor of the TechCorp ProMax. Your suggestion for more color options has been noted and will be passed along to our development team. We always strive to improve and your input is invaluable."}
+
+Sentiment :  positive
+
+Reply: Thank you for your positive feedback on the TechCorp ProMax! We're thrilled to hear that you love its powerful processor. Your suggestion to offer more color options is greatly appreciated and will be considered by our product team. Thank you for helping us improve!"""
