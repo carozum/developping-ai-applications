@@ -255,6 +255,10 @@ But the reliability of our outputs are based on the model's interpretation which
 
 https://platform.openai.com/docs/guides/function-calling
 
+![the life cycle of a function call](image-11.png)
+
+In the API call for the *chat completions endpoint* add the parameter tools : ```tools = function_definition``` where the function_definition is a list of dictionaries
+
 OpenAI endpoints support 'tools', that can be defined 
 - to have the models return more specific information 
 - or return more precise outputs by defining a certain structure. 
@@ -269,18 +273,60 @@ Example we wanted to use the OpenAI API to control a smart home device, such as 
 
 The response should be interpreted consistently across different users, so we'd have to make a change to the original API call. This is where tools come in: by defining certain rules, we set the model output to follow a precise structure. To specify this type of behavior we'd have to define our tool as a function that outputs the expected response, hence the name 'function calling'.
 
-Use cases : 
-1. *going from unstructured to consistent structured output * : By ensuring a reliable structure of our API response, we can integrate our AI application with external systems and be more certain of its reliability. For instance, we can extract instructions from a natural language input and pass them to a smart home system. --> may be replaced by new structured outputs functionality (08/2024)
+At a high level you can break down working with functions into three steps:
+1. Call the chat completions API with your functions and the user’s input
+2. Use the model’s response to call your API or function
+3. Call the chat completions API again, including the response from your function to get a final response
+
+### single function : going from unstructured to consistent structured output : 
+
+By ensuring a reliable structure of our API response, we can integrate our AI application with external systems and be more certain of its reliability. For instance, we can extract instructions from a natural language input and pass them to a smart home system. --> may be replaced by new structured outputs functionality (08/2024)
 
 The response from our API request that uses function calling will be nested in ```tool_calls[0].function.arguments```. ```tool_calls``` is a list, as there is an option to call multiple functions, and in that case each item in 'tool_calls' will contain the response from each function. In the example we have the job and location extracted from the job advert as output.
 
-2. *calling multiple functions to answer complex questions* : For example, in an e-commerce customer service chatbot where the prompt given as input could trigger different functions, such as a function that retrieves the product catalog, one that reads from the website's FAQs, or another that provides a response.
-3. *calling external API* : we can use function calling to define functions that enhance the responses by calling external APIs, such as for a weather chatbot calling an API to return current temperatures at specific locations.
+### calling multiple functions to answer complex questions
+
+ called parallel function calling. For example, in an e-commerce customer service chatbot where the prompt given as input could trigger different functions, such as a function that retrieves the product catalog, one that reads from the website's FAQs, or another that provides a response.
+
+*Parallel function calls* allow you to perform multiple function calls together, allowing for parallel execution and retrieval of results. This reduces the number of calls to the API that need to be made and can improve overall performance.
+
+For example in our simple time app we retrieved multiple times at the same time. This resulted in a chat completion message with three function calls in the tool_calls array, each with a unique id. If you wanted to respond to these function calls, you would add three new messages to the conversation, each containing the result of one function call, with a tool_call_id referencing the id from tools_calls.
 
 
-![the life cycle of a function call](image-11.png)
+### calling external API: 
+we can use function calling to define functions that enhance the responses by calling external APIs, such as for a weather chatbot calling an API to return current temperatures at specific locations.
 
-In the API call for the *chat completions endpoint* add the parameter tools : ```tools = function_definition``` where the function_definition is a list of dictionaries
+
+### Prompt engineering with functions
+When you define a function as part of your request, the details are injected into the system message using specific syntax that the model has been trained on. This means that functions consume tokens in your prompt and that you can apply prompt engineering techniques to optimize the performance of your function calls. The model uses the full context of the prompt to determine if a function should be called including function definition, the system message, and the user messages.
+
+#### Improving quality and reliability
+If the model isn't calling your function when or how you expect, there are a few things you can try to improve the quality.
+
+1. Provide more details in your function definition
+It's important that you provide a meaningful description of the function and provide descriptions for any parameter that might not be obvious to the model. For example, in the description for the location parameter, you could include extra details and examples on the format of the location.
+
+"location": {
+    "type": "string",
+    "description": "The location of the hotel. The location should include the city and the state's abbreviation (i.e. Seattle, WA or Miami, FL)"
+}
+
+2. Provide more context in the system message
+The system message can also be used to provide more context to the model. For example, if you have a function called search_hotels you could include a system message like the following to instruct the model to call the function when a user asks for help with finding a hotel.
+
+{"role": "system", "content": "You're an AI assistant designed to help users search for hotels. When a user asks for help finding a hotel, you should call the search_hotels function."}
+
+3. Instruct the model to ask clarifying questions
+In some cases, you want to instruct the model to ask clarifying questions to prevent making assumptions about what values to use with functions. For example, with search_hotels you would want the model to ask for clarification if the user request didn't include details on location. To instruct the model to ask a clarifying question, you could include content like the next example in your system message.
+
+
+{"role": "system", "content": "Don't make assumptions about what values to use with functions. Ask for clarification if a user request is ambiguous."}
+
+#### Reducing errors
+
+Another area where prompt engineering can be valuable is in reducing errors in function calls. The models are trained to generate function calls matching the schema that you define, but the models produce a function call that doesn't match the schema you defined or try to call a function that you didn't include.
+
+If you find the model is generating function calls that weren't provided, try including a sentence in the system message that says "Only use the functions you have been provided with.".
 
 
 #################################################################

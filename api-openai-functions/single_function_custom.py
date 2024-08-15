@@ -89,6 +89,7 @@ def run_conversation(messages):
     response = client.chat.completions.create(
         model=model,
         messages=messages,
+        max_tokens=150,
         tools=tools,
         tool_choice="auto",
     )
@@ -147,56 +148,14 @@ The current time in San Francisco is 5:23 AM.
 print(run_conversation(messages2))
 
 """Model's response:
-ChatCompletionMessage(content='Generative AI refers to a category of artificial intelligence systems designed to generate new content. This can include text, images, music, videos, or even code. These systems use large datasets and sophisticated algorithms to learn patterns and structures within the data they are trained on, which allows them to create original content that mimics the properties of the input data.\n\nHere are some key aspects of generative AI:\n\n1. **Machine Learning Models**: Generative AI typically relies on advanced machine learning models such as Generative Adversarial Networks (GANs), Variational Autoencoders (VAEs), and Transformers. These models are trained to understand and replicate data patterns.\n\n2. **Applications**:\n   - **Text Generation**: Tools like GPT-3 (OpenAI) can generate human-like text for various purposes, such as writing articles, answering questions, or creating conversational agents.\n   - **Image Generation**: GANs can create realistic images, which can be used in art, design, or even deepfake technology.\n   - **Music and Audio**: AI can compose music or generate sounds that mimic existing musical styles.\n   - **Code Generation**: AI can help write code snippets or even entire applications based on user inputs and requirements.\n\n3. **Creativity and Innovation**: Generative AI augments human creativity by providing new ways to create and innovate. It can act as a tool to inspire new ideas, automate repetitive creative tasks, or explore design spaces that might be too complex for humans to tackle alone.\n\n4. **Challenges**: Despite its potential, generative AI also raises ethical and practical challenges, including issues related to copyright infringement, the creation of misleading or harmful content, and the computational resources required for training large models.\n\nOverall, generative AI represents a significant advancement in artificial intelligence, with the potential to transform various industries by automating and enhancing creative processes.', refusal=None, role='assistant', function_call=None, tool_calls=None)
-
+ChatCompletionMessage(content='Generative AI refers to a type of artificial intelligence that is capable of generating new content, such as text, images, audio, and even video. Unlike traditional AI that focuses on recognizing patterns and making predictions based on existing data, generative AI creates new data that did not exist before. This is achieved through sophisticated algorithms and models, particularly those involving deep learning and neural networks.\n\nSome common examples of generative AI include:\n\n1. **Text Generation**: Models like GPT-3 (Generative Pre-trained Transformer 3) that can write essays, answer questions, create poetry, and even engage in human-like conversations.\n2. **Image Creation**: Tools like DeepArt and GANs (Generative Adversarial Networks) that can', refusal=None, role='assistant', function_call=None, tool_calls=None)
 No tool calls were made by the model.
+generate realistic images or transform one image style into another.
+3. **Audio Generation**: AI systems that can create music, generate speech, or even mimic a specific person's voice with high accuracy.
+4. **Video Generation**: AI that can produce new video content, including deepfakes where the appearance and voice of real individuals are convincingly altered to say or do things they never actually did.
 
-Generative AI is a branch of artificial intelligence focused on creating new content, such as text, images, music, and more. Rather than just analyzing data or performing predefined tasks, generative AI systems can produce original and often highly sophisticated content by learning patterns and structures from massive datasets. Here's a deeper look into some of the key concepts and components:
+Generative AI works by learning from a vast amount of data and then using what it has learned to produce new, similar data. For instance, a model trained on thousands of images of cats can generate entirely new images that are recognizably cats, even if no actual photograph matches exactly.
 
-### Key Concepts:
+A notable application of generative AI is in creative industries where it can assist artists, musicians, and writers in the creation process, often suggesting novel ideas or automating routine tasks. However, it also raises ethical and societal concerns, such as the potential for misuse in spreading misinformation, creating fake content, and infringing on intellectual property. 
 
-1. **Machine Learning Models**:
-   - **Generative Adversarial Networks (GANs)**: Consist of two neural networks, a generator and a discriminator, that work against each other to produce increasingly realistic samples.
-   - **Variational Autoencoders (VAEs)**: Learn to encode data into a latent space and then decode it back, allowing for the generation of new samples.
-   - **Transformers**: Used prominently in natural language processing (NLP); models like GPT (Generative Pre-trained Transformer) have gained attention for their ability to generate coherent and contextually relevant text.
-
-2. **Training on Large Datasets**: Generative models require vast amounts of data to learn the statistical properties of the target content. This data helps the model understand the nuances and variability required for generating new, high-quality output.
-
-### Applications:
-
-1. **Text Generation**:
-   - **Chatbots and Virtual Assistants**: Platforms like OpenAI's GPT-3 can converse in natural language, providing human-like responses.
-   - **Content Creation**: Automated writing for articles, reports, and creative stories.
-
-2. **Image Generation**:
-   - **Art and Design**: Creating new artworks or design elements.
-   - **Fashion**: Generating new clothing designs.
-   - **Deepfakes**: Creating highly realistic images or videos of people that do not exist.
-
-3. **Music and Audio**:
-   - **Composition**: AI can create new musical pieces or soundtracks.
-   - **Audio Synthesis**: Generating new sounds or enhancing existing audio.
-
-4. **Code Generation**:
-   - **Coding Assistants**: Tools like GitHub Copilot assist developers by suggesting code snippets or even generating entire functions.
-
-### Benefits:
-
-1. **Creativity and Innovation**: Generative AI can help human creators by providing inspiration or automating repetitive tasks, enabling them to focus on higher-level creative processes.
-2. **Efficiency**: Automates the generation of content, saving time and effort compared to manual creation.
-3. **Personalization**: Can create customized content tailored to individual preferences or needs.
-
-### Challenges:
-
-1. **Ethical Issues**: Concerns about the misuse of generated content, such as deepfakes or misleading information.
-2. **Intellectual Property**: Questions around copyright and the ownership of AI-generated content.
-3. **Resource-Intensive**: Training generative models often requires significant computational power and energy.
-4. **Quality Control**: Ensuring the generated content is accurate, appropriate, and high quality can be difficult.
-
-### Emerging Trends:
-
-1. **Hybrid Models**: Combining generative AI with other AI disciplines to enhance capabilities.
-2. **Real-Time Generation**: Improvements in computational power and algorithms are making real-time generative applications more feasible.
-3. **Ethical AI**: Development of frameworks and guidelines to ensure responsible use of generative technologies.
-
-Generative AI is rapidly evolving and holds immense potential across various fields, transforming how we create, interact with, and consume digital content."""
+Because of their expansive capabilities, generative AI models often require significant computational resources and careful handling to ensure they're used responsibly and ethically."""
