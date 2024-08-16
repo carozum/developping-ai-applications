@@ -191,14 +191,6 @@ print(run_conversation_auto(input2))
 """The JSON response might not always be valid so you need to add additional logic to your code to be able to handle errors. For some use cases you may find you need to use fine-tuning to improve function calling performance. https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/fine-tuning-functions """
 
 
-#######################################################################
-# choose a function to apply
-
-tool_choice = {
-    'type': "function",
-    'function': {'name': 'get_current_weather'}}
-
-
 ###################################################################
 # second example
 
@@ -280,3 +272,85 @@ for tool_call in response.tool_calls:
 Sentiment :  positive
 
 Reply: Thank you for your positive feedback on the TechCorp ProMax! We're thrilled to hear that you love its powerful processor. Your suggestion to offer more color options is greatly appreciated and will be considered by our product team. Thank you for helping us improve!"""
+
+#######################################################################
+# choose a function to apply
+
+tool_choice = {
+    'type': "function",
+    'function': {'name': 'get_current_weather'}}
+input = "\nI recently purchased the steel color version of the thermal mug and I am absolutely thrilled with it! The mug keeps my drinks hot for hours, which is perfect for my long commutes. The steel color gives it a sleek and professional look that I love. Overall, I'm very happy with my purchase and would highly recommend this product to anyone in need of a reliable and stylish thermal mug.\n"
+messages = [
+    {'role': 'system', 'content': "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous. The sentiment should be positive or negative or neutral."},
+    {'role': 'user', 'content': input}]
+
+function_definition = [
+    {'type': 'function',
+     'function': {
+         'name': 'extract_review_info',
+         'description': 'Get the information about products and customer sentiment from the body of the input text',
+         'parameters': {
+             'type': 'object',
+             'properties': {
+                 'product name': {'type': 'string', 'description': 'Name of the product'},
+                 'product variant': {'type': 'string', 'description': 'Product variant'},
+                 'sentiment': {'type': 'string', 'description': 'sentiment'}
+             }
+         }
+     }
+     }
+]
+response = get_response(model, input, function_definition)
+response_arguments = json.loads(response.tool_calls[0].function.arguments)
+print(type(response_arguments))
+# <class 'dict'>
+print(response_arguments)
+# {'product name': 'thermal mug', 'product variant': 'steel color', 'sentiment': 'positive'}
+
+
+##########################################################################
+# avoiding inconsistent responses adding a system message
+
+input = '\nThrilled with the quality, but I think it should come with a wider choice of screen sizes.\n'
+
+messages = [
+    {'role': 'system', 'content': 'Apply both functions and return responses.'},
+    {'role': 'user', 'content': input}]
+
+messages.append(
+    {'role': 'system', 'content': "Don't make assumptions about what values to plug into functions."})
+
+function_definition = [
+    {'type': 'function',
+     'function': {
+         'name': 'extract_sentiment_and_product_features',
+         'parameters': {
+             'type': 'object',
+             'properties': {
+                 'product': {'type': 'string', 'description': 'The product name'},
+                 'sentiment': {'type': 'string', 'description': 'The overall sentiment of the review'},
+                 'features': {'type': 'array', 'items': {'type': 'string'}, 'description': 'List of features mentioned in the review'},
+                 'suggestions': {'type': 'array', 'items': {'type': 'string'}, 'description': 'Suggestions for improvement'}
+             }
+         }
+     }
+     },
+    {'type': 'function',
+     'function': {
+         'name': 'reply_to_review',
+         'description': 'Reply politely to the customer who wrote the review',
+         'parameters': {
+             'type': 'object',
+             'properties': {
+                 'reply': {
+                     'type': 'string',
+                     'description': 'Reply to post in response to the review'}
+             }
+         }
+     }
+     }
+]
+response = get_response(model, input, function_definition)
+response_arguments = json.loads(response.tool_calls[0].function.arguments)
+print(type(response_arguments))
+print(response_arguments)
