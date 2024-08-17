@@ -336,7 +336,25 @@ If you find the model is generating function calls that weren't provided, try in
 - minimizing the risk of data leaks
 
 *moderation*’ is the process of analyzing input to determine if it contains any content that violates predefined policies or guidelines
+
+### 1. OpenAI Moderation Endpoint
+User message is sent to the OpenAI Moderation API that responses giving probabilities that the user message belongs to any of the moderation categories. 
+- hate
+- harassment, 
+- self harm
+- sexual
+- violence
 ![openAI moderation API](image-12.png)
+
+### 2. Prompt injection
+with larger volumes of text, it is more challenging to identify malicious content. This gap in moderation capabilities opens the door to prompt injection attacks where malicious actors manipulate AI models to produce undesirable outcomes. 
+Strategies to mitigate the risks associated with prompt injections
+1. limiting the amount of text a user can input in a prompt
+2. limiting the number of output tokens generated
+3. narrowing the range of acceptable topics by drawing inputs or output from trusted sources (using pre-selected content as validated input and output). Also ensure a higher degree of reliability in the system's responses. Ex: configuring the system to return outputs from a validated set of materials can be much safer than letting the model generate completely novel content. 
+
+### 3. Adding guardrails
+To avoid certain topics that are outside the scope, while at the same time, they don't belong to any of the moderated categories in the API. We can provide a system message to specify the topics that are allowed. 
 
 #################################################################
 ## 11. testing and validation
