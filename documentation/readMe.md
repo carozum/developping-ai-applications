@@ -331,8 +331,12 @@ If you find the model is generating function calls that weren't provided, try in
 
 #################################################################
 ## 10. moderation and safety
+
 - control unwanted inputs
 - minimizing the risk of data leaks
+
+*moderation*’ is the process of analyzing input to determine if it contains any content that violates predefined policies or guidelines
+![openAI moderation API](image-12.png)
 
 #################################################################
 ## 11. testing and validation

@@ -18,6 +18,7 @@ model = "gpt-4o"
 
 
 def postprocess_response(response):
+    # Check that the response has been produced using function calling
     if response.choices[0].finish_reason == 'tool_calls':
         function_call = response.choices[0].message.tool_calls[0].function
         if function_call.name == "get_airport_info":
@@ -27,7 +28,7 @@ def postprocess_response(response):
                 return airport_info
             else:
                 print(
-                    "Apologies, I couldn't make any recommendations based on the request.")
+                    "Apologies, I couldn't find any airport.")
         elif function_call.name == "get_artwork":
             artwork_keyword = json.loads(function_call.arguments)[
                 "artwork_keyword"]
@@ -53,7 +54,12 @@ def get_response(model, messages, function_definition):
     return postprocess_response(response)
 
 
+def print_response(response):
+    print(postprocess_response(response))
+
 # package the external API call as a function that we are going to call
+
+
 def get_artwork(keyword):
     url = "https://api.artic.edu/api/v1/artworks/search"
     querystring = {"q": keyword}
@@ -132,3 +138,6 @@ function_definition = [
 
 response = get_response(model, messages, function_definition)
 print(response)
+
+########################################################################
+# example 3
