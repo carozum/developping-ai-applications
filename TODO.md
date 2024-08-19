@@ -148,3 +148,16 @@ pour faire de la translation ou de la transcription ou les 2 à la fois. Voir si
 assistant, threads, messages, runs
 in beta version. not available in Azure Open AI
 https://learn.microsoft.com/en-us/azure/ai-services/openai/assistants-reference?tabs=python 
+
+
+
+
+#################################################
+# upload
+
+Ajouter un traitement du texte extrait :
+- revoir le topic et s'assurer qu'il est en phase avec les topics identifiés dans la société 
+- mettre un filtre de modération pour s'assurer que le contenu est OK
+- 
+
+A priori
